@@ -1,0 +1,34 @@
+#binwalk -e firtog.pcap
+#cd _firtog.pcap.extracted
+#for f in `ls *.zlib`; do python -c "import zlib,sys;print repr(zlib.decompress(sys.stdin.read()))" < $f; done
+
+#!/usr/bin/python
+# Simple but secure flag generator for ASIS CTF
+from os import urandom
+from hashlib import md5
+l = 128
+rd = urandom(l)
+h = md5(rd).hexdigest()
+flag = 'ASIS{' + h + '}'
+f = open('flag.txt', 'r').read()
+flag = ''
+for c in f:	
+	flag += hex(pow(ord(c), 65537, 143))[2:]
+print flag
+
+
+import zlib # A compression / decompression library
+
+def read_git_object(filename):
+    """ Read an object in the ``.git/objects`` directory
+    """
+    compressed_contents = open(filename, 'rb').read()
+    return zlib.decompress(compressed_contents)
+
+for x in os.listdir(os.getcwd()):
+    filename = x
+    try:
+        new_object_data = read_git_object(filename)
+        print(new_object_data)
+    except:
+        pass
